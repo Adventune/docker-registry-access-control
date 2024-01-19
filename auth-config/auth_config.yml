@@ -1,0 +1,28 @@
+token:
+  issuer: "Acme auth server" # Must mach the issuer in the registry config
+  expiration: 900
+  # If you are not using a reverse proxy specifying the certificate and key here will not be necessary.
+  # If you do not specify them here, server certificate and key will be used.
+  certificate: "/config/auth.pem"
+  key: "/config/auth.key"
+
+server:
+  addr: ":5001"
+  # I have set up a reverse proxy in front of the auth server and TLS termination is done there.
+  # If you are not using a reverse proxy, you can uncomment the following lines to enable TLS.
+  # certificate: "/path/to/server.pem"
+  # key: "/path/to/server.key"
+
+users:
+  # Password is specified as a BCrypt hash. Use `htpasswd -nB USERNAME` to generate.
+  "admin":
+    password: "$2y$05$LO.vzwpWC5LZGqThvEfznu8qhb5SGqvBSWY1J3yZ4AxtMRZ3kN5jC" # badmin
+  "": {} # Anonymous user
+
+acl:
+  - match: { account: "admin" }
+    actions: ["*"]
+    comment: "Admin has full access to everything."
+  - match: { account: "", name: "hello-world" }
+    actions: ["pull"]
+    comment: 'Anonymous users can pull "hello-world" image.'

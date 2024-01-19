@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  auth:
+    image: cesanta/docker_auth
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./auth-config:/config
+    restart: unless-stopped
+
+  registry:
+    image: registry
+    ports:
+      - "5000:5000"
+    environment:
+      - REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/data
+      - REGISTRY_AUTH=token
+      - REGISTRY_AUTH_TOKEN_REALM="http://127.0.0.1/auth" # Disclaimer: Auth URL is relative to the user not the registry
+      - REGISTRY_AUTH_TOKEN_ISSUER="Acme auth server" # Must match the issuer in the auth server config
+      - REGISTRY_AUTH_TOKEN_SERVICE="registry"
+      - REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE="/auth/certs/auth.pem" # Path to the auth server certificate
+    volumes:
+      - ./registry-data:/data
+      - ./auth-config/auth.pem:/auth/certs/auth.pem
+    restart: unless-stopped
+    depends_on:
+      - auth
