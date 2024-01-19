@@ -1,6 +1,7 @@
 # docker-registry-access-control
 
 This repository contains the code files for my blog post at https://samukupiainen.fi/blog/docker-registry-access-control/.
+> Blog post is not yet published
 
 ## openssl commands:
 
